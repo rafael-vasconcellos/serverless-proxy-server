@@ -1,0 +1,10 @@
+{ 
+    "compilerOptions": { 
+        "module": "CommonJS",
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "rootDir": "./",
+        "jsx": "preserve",
+        "jsxImportSource": "solid-js",
+    }
+}
