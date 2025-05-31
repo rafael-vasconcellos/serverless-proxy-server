@@ -8,17 +8,16 @@ import { renderToString } from "solid-js/web";
 import requireFromString from 'require-from-string';
 import typescript from '@rollup/plugin-typescript';
 
-const tsconfig = JSON.parse(fs.readFileSync('./tsconfig.json'))
 
 
 function buildFiles(dir, options = []) { 
     const dirContents = fs.readdirSync(dir);
     if (dirContents.some(content => content.startsWith('layout'))) { 
-        const contentPath = path.join(dir, 'layout.jsx')
+        const contentPath = path.join(dir, 'layout.tsx')
         options.push( getRollupOptions(contentPath) )
     }
     else if (dirContents.some(content => content.startsWith('index'))) { 
-        const contentPath = path.join(dir, 'index.jsx')
+        const contentPath = path.join(dir, 'index.tsx')
         options.push( getRollupOptions(contentPath) )
     }
     for (const content of dirContents) {
@@ -45,14 +44,18 @@ function getRollupOptions(srcPath) {
             }
         ],
         external: ["solid-js", "solid-js/web"],
-        plugins: [
-            typescript(tsconfig),
-            nodeResolve({ preferBuiltins: true, exportConditions: ["solid", "node"] }),
+        plugins: [ 
+            nodeResolve({ preferBuiltins: true, exportConditions: ["solid", "node"] }), 
+            common(), 
+            typescript({ jsx: 'preserve' }), 
             babel({
                 babelHelpers: "bundled",
-                presets: [["solid", { generate: "ssr", hydratable: true }]]
-            }),
-            common(),
+                extensions: [".js", ".jsx", ".ts", ".tsx"],
+                presets: [ 
+                    ['@babel/preset-typescript', { isTsx: true }], 
+                    ["solid", { generate: "ssr", hydratable: true }], 
+                ]
+            }), 
         ]
     }
 }
@@ -60,7 +63,7 @@ function getRollupOptions(srcPath) {
 async function main() { 
     const options = buildFiles('./src/pages')
     for (const option of options) { 
-        const outputPath = option.input.replace('.jsx', '.html').replace('src\\pages', 'public')
+        const outputPath = option.input.replace('.tsx', '.html').replace('src\\pages', 'public')
         const bundle = await rollup(option)
         const { output } = await bundle.generate({ format: 'cjs' });
         const code = output[0].code;
