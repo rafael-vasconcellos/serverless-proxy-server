@@ -12,11 +12,7 @@ import typescript from '@rollup/plugin-typescript';
 
 function buildFiles(dir, options = []) { 
     const dirContents = fs.readdirSync(dir);
-    if (dirContents.some(content => content.startsWith('layout'))) { 
-        const contentPath = path.join(dir, 'layout.tsx')
-        options.push( getRollupOptions(contentPath) )
-    }
-    else if (dirContents.some(content => content.startsWith('index'))) { 
+    if (dirContents.some(content => content.startsWith('index'))) { 
         const contentPath = path.join(dir, 'index.tsx')
         options.push( getRollupOptions(contentPath) )
     }

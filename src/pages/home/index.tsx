@@ -1,12 +1,11 @@
-import { createEffect } from "solid-js"
-
+import Layout from "./layout";
+import PageHome from "./page";
 
 
 export default function Home() { 
-    let test: string;
-    createEffect(() => console.log('dada'))
-
     return ( 
-        <h1>Hello world</h1>
+        <Layout title="Rafael's Proxy">
+            <PageHome />
+        </Layout>
     )
 }
