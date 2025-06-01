@@ -11,6 +11,7 @@ export default function Layout({ children, title }: LayoutProps) {
                 <link rel="icon" type="image/svg+xml" href="/vite.svg" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>{title}</title>
+                <link href="./output.css" rel="stylesheet"></link>
             </head>
             <body>
                 {children}
