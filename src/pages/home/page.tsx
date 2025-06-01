@@ -14,5 +14,6 @@ export default function PageHome() {
 }
 
 if (typeof window !== 'undefined') { 
+    (globalThis as any)._$HY = { events: [], completed: new WeakSet() };
     hydrate(PageHome, document.querySelector('body') as HTMLElement)
 }

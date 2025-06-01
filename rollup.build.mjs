@@ -40,28 +40,31 @@ function getRollupOption(srcPath, generate) {
                 format: "esm"
             }
         ],
-        external: generate==="ssr"? ["solid-js", "solid-js/web"] : undefined,
+        external: generate==="ssr"? ["solid-js", "solid-js/web", "path", "express", "stream"] : undefined,
         plugins: [ 
             nodeResolve({
-                preferBuiltins: true,
-                exportConditions: ["solid", "node", "browser", "default"],
-                moduleDirectories: ["node_modules"]
+                /* preferBuiltins: true,
+                moduleDirectories: ["node_modules"], */
+                exportConditions: ["solid", 
+                    //"node", "browser", "default"
+                ],
             }), 
-            common(), 
             typescript({ jsx: 'preserve' }), 
             babel({
                 babelHelpers: "bundled",
                 extensions: [".js", ".jsx", ".ts", ".tsx"],
                 presets: [ 
-                    ['@babel/preset-typescript', { isTsx: true }], 
+                    //['@babel/preset-typescript', { isTsx: true }], 
                     ["solid", { generate, hydratable: true }], 
                 ]
             }), 
-        ]
+            common(), 
+        ], 
+        preserveEntrySignatures: generate==='ssr'? true : false,
     }
 }
 
-async function getCodeString(option, format = "cjs") {
+async function getCodeString(option, format = "cjs") { 
     const bundle = await rollup(option)
     const { output } = await bundle.generate({ format });
     const code = output[0].code;
@@ -91,7 +94,7 @@ async function main() {
             prependPaths: [import.meta.url + '/node_modules']
         })
         writeFile(outputPath.replace('.tsx', '.html'), renderToString(ssrComponent))
-        const domCode = await getCodeString(domOption, 'iife')
+        const domCode = await getCodeString(domOption, "esm")
         writeFile(outputPath.replace('.tsx', '.js'), domCode)
     }
 }
