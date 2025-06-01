@@ -6,11 +6,10 @@ import fs from 'fs'
 const app = express();
 app.use('/home', express.static('../public/home'));
 app.get("/", async(req, res) => { 
-    return await handler(req as any).catch(err => ( 
-        res.status(500).send({ 
-            ...err, 
-        })
-    )) as any
+    const response = await handler(req as any).catch(err => ( 
+        new Response(err, { status: 500 })
+    ))
+    res.status(response.status).send(await response.text())
 });
 app.get('/list', (req, res) => { 
     res.send({ 
