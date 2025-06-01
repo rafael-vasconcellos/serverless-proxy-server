@@ -1,5 +1,5 @@
 {
-  "name": "http-proxy-server",
+  "name": "serverless-proxy-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
