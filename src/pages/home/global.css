@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@source "../../";
+
+
+
+@theme { 
+  --color-primary: #c10007;
+  --color-background: linear-gradient(135deg, #0a0a0a 10%, #1d0408 40%, #0a0a0a 90%);
+}
+
+:root { 
+  --primary: #c10007;
+  --background: #1d0408;
+  --foreground: #ededed;
+}
+
+body {
+  color: var(--foreground);
+  background: linear-gradient(135deg, #0a0a0a 10%, #1d0408 40%, #0a0a0a 90%);
+  /* font-family: Helvetica, sans-serif, Arial; */
+}
+
+.inter { 
+  font-family: "Inter", sans-serif;
+}
+
+.flex-responsive { 
+  flex-direction: row;
+}
+
+.inter-logo {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: italic;
+}
+
+@media screen and (max-width: 600px) { 
+  .flex-responsive { 
+    flex-direction: column;
+  }
+}

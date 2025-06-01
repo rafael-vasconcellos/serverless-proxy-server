@@ -1,5 +1,4 @@
 import Logo from "./Logo";
-import './style.css'
 
 
 interface LogoProps { 

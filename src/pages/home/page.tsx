@@ -1,4 +1,5 @@
 import { createEffect } from "solid-js"
+import Header from "../../components/Header";
 
 
 
@@ -7,6 +8,6 @@ export default function PageHome() {
     createEffect(() => console.log('dada'))
 
     return ( 
-        <h1>Hello world</h1>
+        <Header />
     )
 }
