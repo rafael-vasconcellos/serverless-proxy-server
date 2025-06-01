@@ -3,11 +3,12 @@
     "target": "es2021",                              
     "jsx": "preserve",                            
     "jsxImportSource": "solid-js",                        
-    "module": "Preserve", 
+    "module": "preserve", 
     "esModuleInterop": true,                         
     "forceConsistentCasingInFileNames": true,        
     "strict": true,                                  
     "skipLibCheck": true, 
-    "outDir": "dist"
+    "outDir": "dist",
+    /* "allowJs": true */
   }, 
 }

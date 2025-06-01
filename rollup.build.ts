@@ -3,19 +3,27 @@ import path from 'path';
 import nodeResolve from "@rollup/plugin-node-resolve";
 import common from "@rollup/plugin-commonjs";
 import babel from "@rollup/plugin-babel";
+import type { ModuleFormat } from "rollup";
 import { rollup } from "rollup";
 import { renderToString } from "solid-js/web";
 import requireFromString from 'require-from-string';
 import typescript from '@rollup/plugin-typescript';
+import { spawn } from 'child_process';
 
 
 
-function buildRollupOptions(dir, generate = "ssr", options = []) { 
+function buildRollupOptions(dir: string, generate = "ssr", options: any[] = []): any[] { 
     const dirContents = fs.readdirSync(dir);
-    const targetFile = generate==="ssr"? 'index' : 'page'
-    if (dirContents.some(content => content.startsWith(targetFile))) { 
-        const contentPath = path.join(dir, targetFile + '.tsx')
+    let targetFile: string | undefined = generate==="ssr"? 'index' : 'page'
+    targetFile = dirContents.find(content => content.startsWith(targetFile as string))
+    const cssFile = dirContents.find(content => content.endsWith('.css'))
+    if (targetFile) { 
+        const contentPath = path.join(dir, targetFile)
         options.push( getRollupOption(contentPath, generate) )
+    }
+    if (cssFile) { 
+        const contentPath = path.join(dir, cssFile)
+        writeCss(contentPath)
     }
     for (const content of dirContents) { 
         const contentPath = path.join(dir, content);
@@ -29,7 +37,7 @@ function buildRollupOptions(dir, generate = "ssr", options = []) {
     return options
 }
 
-function getRollupOption(srcPath, generate) { 
+function getRollupOption(srcPath: string, generate: string = 'ssr') { 
     const outputDir = path.dirname(srcPath).replace('src\\pages', 'public')
 
     return {
@@ -45,11 +53,12 @@ function getRollupOption(srcPath, generate) {
             nodeResolve({
                 /* preferBuiltins: true,
                 moduleDirectories: ["node_modules"], */
+                extensions: [".js", ".jsx", ".ts", ".tsx"],
                 exportConditions: ["solid", 
                     //"node", "browser", "default"
                 ],
             }), 
-            typescript({ jsx: 'preserve' }), 
+            srcPath.includes('tsx')? typescript({ jsx: 'preserve' }) : '', 
             babel({
                 babelHelpers: "bundled",
                 extensions: [".js", ".jsx", ".ts", ".tsx"],
@@ -64,14 +73,14 @@ function getRollupOption(srcPath, generate) {
     }
 }
 
-async function getCodeString(option, format = "cjs") { 
+async function getCodeString(option: any, format: ModuleFormat  = "cjs") { 
     const bundle = await rollup(option)
     const { output } = await bundle.generate({ format });
     const code = output[0].code;
     return code
 }
 
-function writeFile(pathString, data) { 
+function writeFile(pathString: string, data: any) { 
     const dirname = path.dirname(pathString)
     if (!fs.existsSync(dirname)) { 
         return fs.mkdir(dirname, { recursive: true }, (err) => { 
@@ -82,20 +91,34 @@ function writeFile(pathString, data) {
     fs.writeFileSync(pathString, data)
 }
 
+function writeCss(srcPath: string) { 
+    const { dir } = getRollupOption(srcPath)?.output?.[0] ?? {}
+    return spawn('npx', [ 
+            '@tailwindcss/cli',
+            '-i', srcPath,
+            '-o', path.join(dir, 'style.css'), 
+        ], {
+            stdio: 'inherit', // redireciona stdout/stderr do filho para o console principal
+            shell: true // necessário para que o comando 'npx' funcione corretamente no Windows
+        }
+    )
+}
+
 async function main() { 
     const ssrOptions = buildRollupOptions('./src/pages', "ssr")
     const domOptions = buildRollupOptions('./src/pages', "dom")
     for (let i=0; i<ssrOptions.length; i++) { 
         const ssrOption = ssrOptions[i]
         const domOption = domOptions[i]
-        const outputPath = ssrOption.input.replace('src\\pages', 'public')
+        const outputPath: string = ssrOption.input.replace('src\\pages', 'public')
+        const fileExtension = '.' + outputPath.split('.').at(-1)
         const ssrCode = await getCodeString(ssrOption)
         const ssrComponent = requireFromString(ssrCode, { 
             prependPaths: [import.meta.url + '/node_modules']
         })
-        writeFile(outputPath.replace('.tsx', '.html'), renderToString(ssrComponent))
+        writeFile(outputPath.replace(fileExtension, '.html'), renderToString(ssrComponent))
         const domCode = await getCodeString(domOption, "esm")
-        writeFile(outputPath.replace('.tsx', '.js'), domCode)
+        writeFile(outputPath.replace(fileExtension, '.js'), domCode)
     }
 }
 
