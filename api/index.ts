@@ -4,7 +4,7 @@ import fs from 'fs'
 
 
 const app = express();
-app.use('/home', express.static('../public/home'));
+//app.use('/home', express.static('../public/home'));
 app.get("/", async(req, res) => { 
     const response = await handler(req as any).catch(err => ( 
         new Response(err, { status: 500 })

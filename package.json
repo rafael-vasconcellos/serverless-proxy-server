@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:css": "npx @tailwindcss/cli -i ./src/pages/home/global.css -o ./api/public/home/output.css",
+    "build:css": "npx @tailwindcss/cli -i ./src/pages/home/global.css -o ./public/home/output.css",
     "build": "node rollup.build.mjs && npm run build:css"
   },
   "keywords": [],
