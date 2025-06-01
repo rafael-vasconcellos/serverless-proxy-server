@@ -2,6 +2,9 @@
     "version": 2,
     "rewrites": [
         {
+            "source": "/home",
+            "destination": "/public/home"
+        }, {
             "source": "/(.*)",
             "destination": "/api"
         }
