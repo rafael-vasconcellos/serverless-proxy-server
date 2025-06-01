@@ -2,7 +2,7 @@ import { format } from 'url'
 import { ExtendedRequest } from "./types";
 
 
-export async function GET(req: ExtendedRequest) { 
+export default async function handler(req: ExtendedRequest) { 
     if (!req.url) { return new Response(null, { status: 400 }) }
     let { hostname: queryHostname } = req.query ?? {}
     const { hostname: cookieHostname } = req.cookies ?? {}
