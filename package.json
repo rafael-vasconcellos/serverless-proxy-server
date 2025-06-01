@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "node rollup.build.ts"
+    "build": "node rollup.build.js"
   },
   "keywords": [],
   "author": "",

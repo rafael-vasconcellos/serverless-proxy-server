@@ -3,7 +3,6 @@ import path from 'path';
 import nodeResolve from "@rollup/plugin-node-resolve";
 import common from "@rollup/plugin-commonjs";
 import babel from "@rollup/plugin-babel";
-import type { ModuleFormat } from "rollup";
 import { rollup } from "rollup";
 import { renderToString } from "solid-js/web";
 import requireFromString from 'require-from-string';
@@ -12,10 +11,10 @@ import { spawn } from 'child_process';
 
 
 
-function buildRollupOptions(dir: string, generate = "ssr", options: any[] = []): any[] { 
+async function buildRollupOptions(dir, generate = "ssr", options = []) { 
     const dirContents = fs.readdirSync(dir);
-    let targetFile: string | undefined = generate==="ssr"? 'index' : 'page'
-    targetFile = dirContents.find(content => content.startsWith(targetFile as string))
+    let targetFile = generate==="ssr"? 'index' : 'page'
+    targetFile = dirContents.find(content => content.startsWith(targetFile))
     const cssFile = dirContents.find(content => content.endsWith('.css'))
     if (targetFile) { 
         const contentPath = path.join(dir, targetFile)
@@ -23,22 +22,22 @@ function buildRollupOptions(dir: string, generate = "ssr", options: any[] = []):
     }
     if (cssFile) { 
         const contentPath = path.join(dir, cssFile)
-        writeCss(contentPath)
+        await writeCss(contentPath)
     }
     for (const content of dirContents) { 
         const contentPath = path.join(dir, content);
         const stats = fs.statSync(contentPath);
 
         if (stats.isDirectory()) {
-            buildRollupOptions(contentPath, generate, options)
+            await buildRollupOptions(contentPath, generate, options)
         }
     }
 
     return options
 }
 
-function getRollupOption(srcPath: string, generate: string = 'ssr') { 
-    const outputDir = path.dirname(srcPath).replace('src\\pages', '.vercel\\static')
+function getRollupOption(srcPath, generate = 'ssr') { 
+    const outputDir = path.dirname(srcPath).replace(`src${path.sep}pages`, 'public')
 
     return {
         input: srcPath,
@@ -73,14 +72,14 @@ function getRollupOption(srcPath: string, generate: string = 'ssr') {
     }
 }
 
-async function getCodeString(option: any, format: ModuleFormat  = "cjs") { 
+async function getCodeString(option, format = "cjs") { 
     const bundle = await rollup(option)
     const { output } = await bundle.generate({ format });
     const code = output[0].code;
     return code
 }
 
-function writeFile(pathString: string, data: any) { 
+function writeFile(pathString, data) { 
     const dirname = path.dirname(pathString)
     if (!fs.existsSync(dirname)) { 
         return fs.mkdir(dirname, { recursive: true }, (err) => { 
@@ -89,28 +88,36 @@ function writeFile(pathString: string, data: any) {
         }) 
     }
     fs.writeFileSync(pathString, data)
+    console.log('Writed file in: ' + pathString)
 }
 
-function writeCss(srcPath: string) { 
+function writeCss(srcPath) { 
     const { dir } = getRollupOption(srcPath)?.output?.[0] ?? {}
-    return spawn('npx', [ 
+    const child = spawn('npx', [ 
             '@tailwindcss/cli',
             '-i', srcPath,
-            '-o', path.join(dir, 'style.css'), 
+            '-o', path.join(dir, 'output.css'), 
         ], {
             stdio: 'inherit', // redireciona stdout/stderr do filho para o console principal
-            shell: true // necessário para que o comando 'npx' funcione corretamente no Windows
+            shell: true, // necessário para que o comando 'npx' funcione corretamente no Windows
+            
         }
     )
+    const { promise, resolve, reject } = Promise.withResolvers();
+    child.on('close', (code, signal) => { console.log('Builded css file in: ' + path.join(dir, 'style.css'))
+        resolve(child)
+    })
+    return promise
 }
 
 async function main() { 
-    const ssrOptions = buildRollupOptions('./src/pages', "ssr")
-    const domOptions = buildRollupOptions('./src/pages', "dom")
+    const ssrOptions = await buildRollupOptions('./src/pages', "ssr")
+    const domOptions = await buildRollupOptions('./src/pages', "dom")
     for (let i=0; i<ssrOptions.length; i++) { 
         const ssrOption = ssrOptions[i]
         const domOption = domOptions[i]
-        const outputPath: string = ssrOption.input.replace('src\\pages', '.vercel\\static')
+        const outputPath = ssrOption.input.replace(`src${path.sep}pages`, 'public')
+        console.log(outputPath)
         const fileExtension = '.' + outputPath.split('.').at(-1)
         const ssrCode = await getCodeString(ssrOption)
         const ssrComponent = requireFromString(ssrCode, { 
@@ -120,6 +127,10 @@ async function main() {
         const domCode = await getCodeString(domOption, "esm")
         writeFile(outputPath.replace(fileExtension, '.js'), domCode)
     }
+
+    //fs.cp('./public', './.vercel/static', { recursive: true }, ()=>{})
 }
 
-main()
+main().then(response => { 
+    console.log(fs.readdirSync('.'))
+})
