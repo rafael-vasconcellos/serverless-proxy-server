@@ -40,9 +40,13 @@ function getRollupOption(srcPath, generate) {
                 format: "esm"
             }
         ],
-        external: ["solid-js", "solid-js/web"],
+        external: generate==="ssr"? ["solid-js", "solid-js/web"] : undefined,
         plugins: [ 
-            nodeResolve({ preferBuiltins: true, exportConditions: ["solid", "node"] }), 
+            nodeResolve({
+                preferBuiltins: true,
+                exportConditions: ["solid", "node", "browser", "default"],
+                moduleDirectories: ["node_modules"]
+            }), 
             common(), 
             typescript({ jsx: 'preserve' }), 
             babel({
@@ -87,7 +91,7 @@ async function main() {
             prependPaths: [import.meta.url + '/node_modules']
         })
         writeFile(outputPath.replace('.tsx', '.html'), renderToString(ssrComponent))
-        const domCode = await getCodeString(domOption, "esm")
+        const domCode = await getCodeString(domOption, 'iife')
         writeFile(outputPath.replace('.tsx', '.js'), domCode)
     }
 }
