@@ -12,8 +12,9 @@ import typescript from '@rollup/plugin-typescript';
 
 function buildRollupOptions(dir, generate = "ssr", options = []) { 
     const dirContents = fs.readdirSync(dir);
-    if (dirContents.some(content => content.startsWith('index'))) { 
-        const contentPath = path.join(dir, 'index.tsx')
+    const targetFile = generate==="ssr"? 'index' : 'page'
+    if (dirContents.some(content => content.startsWith(targetFile))) { 
+        const contentPath = path.join(dir, targetFile + '.tsx')
         options.push( getRollupOption(contentPath, generate) )
     }
     for (const content of dirContents) { 
@@ -56,15 +57,11 @@ function getRollupOption(srcPath, generate) {
     }
 }
 
-async function getComponent(option) {
+async function getCodeString(option, format = "cjs") {
     const bundle = await rollup(option)
-    const { output } = await bundle.generate({ format: 'cjs' });
+    const { output } = await bundle.generate({ format });
     const code = output[0].code;
-    const Component = requireFromString(code, { 
-        prependPaths: [import.meta.url + '/node_modules']
-    })
-    //console.log(code)
-    return Component
+    return code
 }
 
 async function main() { 
@@ -74,10 +71,13 @@ async function main() {
         const ssrOption = ssrOptions[i]
         const domOption = domOptions[i]
         const outputPath = ssrOption.input.replace('src\\pages', 'public')
-        const ssrComponent = await getComponent(ssrOption)
+        const ssrCode = await getCodeString(ssrOption)
+        const ssrComponent = requireFromString(ssrCode, { 
+            prependPaths: [import.meta.url + '/node_modules']
+        })
         fs.writeFileSync(outputPath.replace('.tsx', '.html'), renderToString(ssrComponent))
-        /* const domComponent = await getComponent(domOption)
-        fs.writeFileSync(outputPath.replace('.tsx', '.js'), renderToString(domComponent)) */
+        const domCode = await getCodeString(domOption, "esm")
+        fs.writeFileSync(outputPath.replace('.tsx', '.js'), domCode)
     }
 }
 
