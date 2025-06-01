@@ -38,7 +38,7 @@ function buildRollupOptions(dir: string, generate = "ssr", options: any[] = []):
 }
 
 function getRollupOption(srcPath: string, generate: string = 'ssr') { 
-    const outputDir = path.dirname(srcPath).replace('src\\pages', 'public')
+    const outputDir = path.dirname(srcPath).replace('src\\pages', '.vercel\\static')
 
     return {
         input: srcPath,
@@ -110,7 +110,7 @@ async function main() {
     for (let i=0; i<ssrOptions.length; i++) { 
         const ssrOption = ssrOptions[i]
         const domOption = domOptions[i]
-        const outputPath: string = ssrOption.input.replace('src\\pages', 'public')
+        const outputPath: string = ssrOption.input.replace('src\\pages', '.vercel\\static')
         const fileExtension = '.' + outputPath.split('.').at(-1)
         const ssrCode = await getCodeString(ssrOption)
         const ssrComponent = requireFromString(ssrCode, { 
