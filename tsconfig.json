@@ -12,5 +12,5 @@
     "outDir": "./public"
   },
 
-  "exclude": ["./build/*.*"]
+  "exclude": ["test/*.ts"]
 }
