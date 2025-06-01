@@ -15,6 +15,7 @@ export default function Layout({ children, title }: LayoutProps) {
             </head>
             <body>
                 {children}
+                <script src="./script.js" type="module"></script>
             </body>
         </>
     )
