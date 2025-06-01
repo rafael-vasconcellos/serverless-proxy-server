@@ -3,8 +3,8 @@ import { ExtendedRequest } from "./types";
 
 
 export default async function handler(req: ExtendedRequest) { 
-    console.warn("URL: " + req.url)
-    if (!req.url) { return new Response(null, { status: 400 }) }
+    const url = req.headers['referer']
+    if (!url) { return new Response(null, { status: 400 }) }
     let { hostname: queryHostname } = req.query ?? {}
     const { hostname: cookieHostname } = req.cookies ?? {}
     const headers = Object.fromEntries( 
@@ -12,15 +12,16 @@ export default async function handler(req: ExtendedRequest) {
     ) as Record<string, any>
     queryHostname = queryHostname instanceof Array? queryHostname[0] : queryHostname
     const hostname = queryHostname ?? cookieHostname
-    const pathname = new URL(req.url).pathname
-    const url = hostname? format({ 
+    const pathname = new URL(url).pathname
+    const targetUrl = hostname? format({ 
         protocol: 'https',
         hostname,
         pathname
     }) : null
 
-    if (!url) { return new Response(null, { status: 400 }) }
-    const response = await fetch(url, { headers })
+    if (pathname==="/") { return new Response('Hello World!', { status: 200 }) }
+    if (!targetUrl) { return new Response(null, { status: 400 }) }
+    const response = await fetch(targetUrl, { headers })
     response.headers.append(
         "Set-Cookie",
         `hostname=${hostname}; Path=/`

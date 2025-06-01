@@ -30,7 +30,7 @@ function buildRollupOptions(dir, generate = "ssr", options = []) {
 }
 
 function getRollupOption(srcPath, generate) { 
-    const outputDir = path.dirname(srcPath).replace('src\\pages', 'public')
+    const outputDir = path.dirname(srcPath).replace('src\\pages', 'api\public')
 
     return {
         input: srcPath,
@@ -88,7 +88,7 @@ async function main() {
     for (let i=0; i<ssrOptions.length; i++) { 
         const ssrOption = ssrOptions[i]
         const domOption = domOptions[i]
-        const outputPath = ssrOption.input.replace('src\\pages', 'public')
+        const outputPath = ssrOption.input.replace('src\\pages', 'api\public')
         const ssrCode = await getCodeString(ssrOption)
         const ssrComponent = requireFromString(ssrCode, { 
             prependPaths: [import.meta.url + '/node_modules']
