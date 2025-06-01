@@ -6,13 +6,9 @@ export default function Input() {
 
 	function search() { 
 		if (input?.value) { 
-			let value = input.value
-			if (value.includes('.com')) { 
-				const url = new URL(value)
-				const searchParams = url.searchParams.size>0? '?' + url.searchParams.toString() : ''
-				return location.assign(url.pathname + searchParams)
-			}
-			location.assign('/profile/' + value)
+			const targetUrlString = input.value
+			const targetUrl = new URL(targetUrlString)
+			location.assign(targetUrl.pathname + `?hostname=${targetUrl.hostname}`)
 		}
 	}
 
