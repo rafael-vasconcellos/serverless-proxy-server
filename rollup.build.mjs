@@ -64,6 +64,17 @@ async function getCodeString(option, format = "cjs") {
     return code
 }
 
+function writeFile(pathString, data) { 
+    const dirname = path.dirname(pathString)
+    if (!fs.existsSync(dirname)) { 
+        return fs.mkdir(dirname, { recursive: true }, (err) => { 
+            if (err) { return console.log(err) }
+            fs.writeFileSync(pathString, data)
+        }) 
+    }
+    fs.writeFileSync(pathString, data)
+}
+
 async function main() { 
     const ssrOptions = buildRollupOptions('./src/pages', "ssr")
     const domOptions = buildRollupOptions('./src/pages', "dom")
@@ -75,9 +86,9 @@ async function main() {
         const ssrComponent = requireFromString(ssrCode, { 
             prependPaths: [import.meta.url + '/node_modules']
         })
-        fs.writeFileSync(outputPath.replace('.tsx', '.html'), renderToString(ssrComponent))
+        writeFile(outputPath.replace('.tsx', '.html'), renderToString(ssrComponent))
         const domCode = await getCodeString(domOption, "esm")
-        fs.writeFileSync(outputPath.replace('.tsx', '.js'), domCode)
+        writeFile(outputPath.replace('.tsx', '.js'), domCode)
     }
 }
 
