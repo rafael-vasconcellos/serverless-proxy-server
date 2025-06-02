@@ -8,7 +8,7 @@ export default async function handler(req: ExtendedRequest) {
     let { hostname: queryHostname } = req.query ?? {}
     const { hostname: cookieHostname } = req.cookies ?? {}
     const headers = Object.fromEntries( 
-        Object.entries(req.headers ?? {}).filter(([ key, value ]) => !(key in ['referer']))
+        Object.entries(req.headers ?? {}).filter(([ key, value ]) => !['referer'].includes(key))
     ) as Record<string, any>
     queryHostname = queryHostname instanceof Array? queryHostname[0] : queryHostname
     const hostname = queryHostname ?? cookieHostname
@@ -22,9 +22,11 @@ export default async function handler(req: ExtendedRequest) {
     if (pathname==="/") { return new Response('Hello World!', { status: 200 }) }
     if (!targetUrl) { return new Response(null, { status: 400 }) }
     const response = await fetch(targetUrl, { headers })
-    response.headers.append(
-        "Set-Cookie",
-        `hostname=${hostname}; Path=/`
-    );
-    return response
+    return new Response(await response.text(), { 
+        status: response.status,
+        headers: { 
+            ...Object.fromEntries(response.headers.entries()),
+            "Set-Cookie": `hostname=${hostname}; Path=/`
+        }
+    })
 }
