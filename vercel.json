@@ -5,7 +5,7 @@
             "source": "/home",
             "destination": "/public/home"
         }, {
-            "source": "/public/(.*)",
+            "source": "/public",
             "destination": "/public"
         }, {
             "source": "/(.*)",
