@@ -117,7 +117,6 @@ async function main() {
         const ssrOption = ssrOptions[i]
         const domOption = domOptions[i]
         const outputPath = ssrOption.input.replace(`src${path.sep}pages`, 'public')
-        console.log(outputPath)
         const fileExtension = '.' + outputPath.split('.').at(-1)
         const ssrCode = await getCodeString(ssrOption)
         const ssrComponent = requireFromString(ssrCode, { 
@@ -132,5 +131,8 @@ async function main() {
 }
 
 main().then(response => { 
-    console.log(fs.readdirSync('.'))
+    console.log({ 
+        root: fs.readdirSync('.'),
+        ".vercel": fs.existsSync('./.vercel')? fs.readdirSync('./.vercel') : undefined
+    })
 })

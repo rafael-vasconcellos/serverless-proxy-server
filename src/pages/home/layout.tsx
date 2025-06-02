@@ -8,14 +8,14 @@ export default function Layout({ children, title }: LayoutProps) {
         <>
             <head>
                 <meta charset="UTF-8" />
-                <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+                <link rel="icon" type="image/svg+xml" href="/home/favicon.svg" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>{title}</title>
-                <link href="./output.css" rel="stylesheet"></link>
+                <link href="/home/output.css" rel="stylesheet"></link>
             </head>
             <body>
                 {children}
-                <script src="./script.js" type="module"></script>
+                <script src="/home/index.js" type="module"></script>
             </body>
         </>
     )

@@ -13,7 +13,8 @@ app.get("/", async(req, res) => {
 });
 app.get('/list', (req, res) => { 
     res.send({ 
-        current: fs.readdirSync('./api')
+        current: fs.readdirSync('./api'),
+        parent: fs.readdirSync('../')
     })
 })
 

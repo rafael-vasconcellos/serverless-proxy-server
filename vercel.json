@@ -5,6 +5,9 @@
             "source": "/home",
             "destination": "/public/home"
         }, {
+            "source": "/public/(.*)",
+            "destination": "/public"
+        }, {
             "source": "/(.*)",
             "destination": "/api"
         }
