@@ -13,7 +13,7 @@ export default async function handler(req: ExtendedRequest) {
     )
     queryHostname = queryHostname instanceof Array? queryHostname[0] : queryHostname
     const hostname = queryHostname ?? cookieHostname
-    const pathname = req.url
+    const pathname = req.url?.slice(0, req.url.indexOf('?'))
     const targetUrl = hostname? format({ 
         protocol: 'https',
         hostname,
