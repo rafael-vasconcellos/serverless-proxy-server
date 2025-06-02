@@ -12,6 +12,14 @@ export function getHostname(req: ExtendedRequest) {
     return { hostname, queryHostname, cookieHostname, refererHostname }
 }
 
+function getHeader(header_name: string, headers: Headers) { 
+    const header: any = {}
+    if (headers.get(header_name)) { 
+        header[header_name] = headers.get(header_name)
+    }
+    return header
+}
+
 export default async function handler(req: ExtendedRequest) { 
     /* const headers: HeadersInit = Object.fromEntries( 
         Object.entries(req.headers ?? {}).filter(([ key, value ]) => !['referer', 'host'].includes(key))
@@ -47,9 +55,10 @@ export default async function handler(req: ExtendedRequest) {
         cookie.replace(targetDomainName, proxyDomainName)
     )
     const newHeaders = new Headers({ 
-        "Content-Security-Policy": "default-src 'self'; script-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src *; font-src *; connect-src *",
+        "Content-Security-Policy": "default-src 'self'; script-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * data:; font-src *; connect-src *",
         "content-type": response.headers.get('content-type') ?? "text/plain",
-        "content-length": response.headers.get('content-length') ?? "",
+        //...getHeader('content-length', response.headers),
+        //...getHeader('content-encoding', response.headers),
         "Set-Cookie": `hostname=${hostname}; Path=/`
     })
     setCookieHeaders.forEach(cookie => newHeaders.append("Set-Cookie", cookie))
