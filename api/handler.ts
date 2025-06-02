@@ -3,8 +3,6 @@ import { ExtendedRequest } from "./types";
 
 
 export default async function handler(req: ExtendedRequest) { 
-    const url = req.headers['referer']
-    if (!url) { return new Response("Failed to load URL.", { status: 400 }) }
     let { hostname: queryHostname } = req.query ?? {}
     const { hostname: cookieHostname } = req.cookies ?? {}
     const headers = Object.fromEntries( 
@@ -12,14 +10,17 @@ export default async function handler(req: ExtendedRequest) {
     ) as Record<string, any>
     queryHostname = queryHostname instanceof Array? queryHostname[0] : queryHostname
     const hostname = queryHostname ?? cookieHostname
-    const pathname = new URL(url).pathname
+    const pathname = req.url
     const targetUrl = hostname? format({ 
         protocol: 'https',
         hostname,
         pathname
     }) : null
 
-    if (!targetUrl) { return new Response("Failed loading URL: " + targetUrl, { status: 400 }) }
+    if (!targetUrl) { return new Response(JSON.stringify({ 
+        query: queryHostname,
+        cookie: cookieHostname
+    }), { status: 400 }) }
     const response = await fetch(targetUrl, { headers })
     return new Response(await response.text(), { 
         status: response.status,
