@@ -4,7 +4,7 @@ import { ExtendedRequest } from "./types";
 
 export default async function handler(req: ExtendedRequest) { 
     const url = req.headers['referer']
-    if (!url) { return new Response(null, { status: 400 }) }
+    if (!url) { return new Response("Failed to load URL.", { status: 400 }) }
     let { hostname: queryHostname } = req.query ?? {}
     const { hostname: cookieHostname } = req.cookies ?? {}
     const headers = Object.fromEntries( 
@@ -19,8 +19,7 @@ export default async function handler(req: ExtendedRequest) {
         pathname
     }) : null
 
-    if (pathname==="/") { return new Response('Hello World!', { status: 200 }) }
-    if (!targetUrl) { return new Response(null, { status: 400 }) }
+    if (!targetUrl) { return new Response("Failed loading URL: " + targetUrl, { status: 400 }) }
     const response = await fetch(targetUrl, { headers })
     return new Response(await response.text(), { 
         status: response.status,
