@@ -25,7 +25,7 @@ export default async function handler(req: ExtendedRequest) {
         query: queryHostname,
         cookie: cookieHostname
     }), { status: 400 }) }
-    const response = await fetch(targetUrl, { headers })
+    const response = await fetch(targetUrl)
     return new Response(await response.text(), { 
         status: response.status,
         headers: { 

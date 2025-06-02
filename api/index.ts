@@ -18,7 +18,16 @@ const expressHandler = async(req: typeof request, res: typeof response) => {
         current: fs.readdirSync('./api'),
         parent: fs.readdirSync('../')
     })
+});
+app.get('/ip', async(req, res) => { 
+    const response = await fetch('https://api.ipify.org?format=json')
+    .catch(err => ( 
+        new Response(err?.stack ?? err, { status: 500 })
+    ));
+
+    res.status(response.status).send(await response.text())
 }); */
+
 app.get("/*splat", expressHandler)
 app.get("/", expressHandler)
 
