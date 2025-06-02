@@ -1,5 +1,6 @@
 import express, { request, response } from "express";
 import handler from "./handler.js";
+import cookieParser from 'cookie-parser'
 import fs from 'fs'
 
 
@@ -9,9 +10,21 @@ const expressHandler = async(req: typeof request, res: typeof response) => {
     const response = await handler(req as any).catch(err => ( 
         new Response(err?.stack ?? err, { status: 500 })
     ))
-    res.header('Content-Security-Policy', "default-src 'self'; connect-src 'self'")
-    res.status(response.status).send(await response.text())
+    response.headers.forEach((value, key) => res.header(key, value))
+    res.status(response.status)//.send(await response.blob())
+
+    response.body?.pipeTo(
+        new WritableStream({
+            write(chunk) {
+                res.write(chunk)
+            },
+            close() {
+                res.end()
+            }
+        })
+    )
 }
+app.use(cookieParser())
 //app.use('/home', express.static('../public/home'));
 /* app.get('/list', (req, res) => { 
     res.send({ 

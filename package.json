@@ -17,6 +17,7 @@
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.2",
     "@tailwindcss/cli": "^4.1.8",
+    "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.2",
     "@types/node": "^22.15.29",
     "@types/require-from-string": "^1.2.3",
@@ -30,6 +31,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
     "solid-js": "^1.9.7"
   }
