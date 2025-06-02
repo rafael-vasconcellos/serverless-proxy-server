@@ -20,7 +20,8 @@ export default async function handler(req: ExtendedRequest) {
         Object.entries(req.query ?? {}).filter(([ key, value ]) => key!=='hostname')
     )
     const { hostname, queryHostname, cookieHostname, refererHostname } = getHostname(req)
-    const pathname = req.url?.slice(0, req.url.indexOf('?'))
+    const pathname = req.url?.includes('?')?
+        req.url?.slice(0, req.url.indexOf('?')) : req.url
     const targetUrl = hostname? format({ 
         protocol: 'https',
         hostname,
@@ -54,11 +55,13 @@ export default async function handler(req: ExtendedRequest) {
     setCookieHeaders.forEach(cookie => newHeaders.append("Set-Cookie", cookie))
 
 
-    const responseEntity = new Response(response.body, { 
+    if (!response.ok) { 
+        console.log('Failed to fetch URL: ' + targetUrl)
+    }
+    return new Response(response.body, { 
         status: response.status,
         headers: newHeaders
     })
-    return responseEntity
 }
 
 /*
