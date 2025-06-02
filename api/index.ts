@@ -15,6 +15,7 @@ app.get("/*splat", async(req, res) => {
     const response = await handler(req as any).catch(err => ( 
         new Response(err?.stack ?? err, { status: 500 })
     ))
+    res.header('Content-Security-Policy', "default-src 'self'; connect-src 'self'")
     res.status(response.status).send(await response.text())
 });
 
