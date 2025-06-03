@@ -1,5 +1,5 @@
 import express, { request, response } from "express";
-import handler from "./handler.js";
+import handler, { getHostname } from "./handler.js";
 import cookieParser from 'cookie-parser'
 import fs from 'fs'
 
@@ -11,8 +11,16 @@ const expressHandler = async(req: typeof request, res: typeof response) => {
         new Response(err?.stack ?? err, { status: 500 })
     ))
     response.headers.forEach((value, key) => res.header(key, value))
-    res.status(response.status)//.send(await response.blob())
+    res.status(response.status)
 
+    if (response.headers.get('content-type')?.includes('text')) { 
+        const text_code = await response.text()
+        const { hostname } = getHostname(req as any)
+        const modifiedText = text_code.replaceAll(hostname, req.hostname)
+        res.send(modifiedText)
+        //console.log(modifiedText)
+        return;
+    }
     response.body?.pipeTo(
         new WritableStream({
             write(chunk) {
