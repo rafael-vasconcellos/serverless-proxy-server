@@ -1,21 +1,31 @@
-import express, { request, response } from "express";
-import handler, { getHostname } from "./handler.js";
+import path from "path";
+import { fileURLToPath } from 'url'
+import express, { request, response } from "express"
 import cookieParser from 'cookie-parser'
+import handler, { getHostname } from "./handler.js"
 import fs from 'fs'
 
 
 
-const app = express();
+const app = express()
+const dirname = path.dirname(fileURLToPath(import.meta.url))
+const public_path = path.join(dirname, '../public')
 const expressHandler = async(req: typeof request, res: typeof response) => { 
+    const { hostname } = getHostname(req as any)
+    if (!hostname) { 
+        if (!req.url.includes('/home')) { res.redirect('/home') }
+        return 
+    }
+
     const response = await handler(req as any).catch(err => ( 
         new Response(err?.stack ?? err, { status: 500 })
     ))
     response.headers.forEach((value, key) => res.header(key, value))
     res.status(response.status)
 
+
     if (response.headers.get('content-type')?.includes('text')) { 
         const text_code = await response.text()
-        const { hostname } = getHostname(req as any)
         const domainName = hostname.replace('www.', '')
         let modifiedText = text_code.replaceAll(hostname, req.hostname)
         modifiedText = modifiedText.replaceAll('=.' + domainName, '=' + req.hostname)
@@ -35,7 +45,7 @@ const expressHandler = async(req: typeof request, res: typeof response) => {
     )
 }
 app.use(cookieParser())
-//app.use('/home', express.static('../public/home'));
+app.use(express.static(public_path))
 /* app.get('/list', (req, res) => { 
     res.send({ 
         current: fs.readdirSync('./api'),

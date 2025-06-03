@@ -127,7 +127,7 @@ async function main() {
         writeFile(outputPath.replace(fileExtension, '.js'), domCode)
     }
 
-    //fs.cp('./public', './.vercel/static', { recursive: true }, ()=>{})
+    fs.cp('./public', './dist/public', { recursive: true }, ()=>{})
 }
 
 main().then(response => { 
