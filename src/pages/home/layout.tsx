@@ -8,7 +8,7 @@ export default function Layout({ children, title }: LayoutProps) {
         <>
             <head>
                 <meta charset="UTF-8" />
-                <link rel="icon" type="image/svg+xml" href="/public/favicon.svg" />
+                <link rel="icon" type="image/svg+xml" href="/japanicon.svg" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <title>{title}</title>
                 <link href="/home/output.css" rel="stylesheet"></link>

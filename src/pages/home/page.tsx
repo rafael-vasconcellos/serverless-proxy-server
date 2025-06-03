@@ -1,6 +1,7 @@
-import { createEffect } from "solid-js"
-import Header from "../../components/Header";
+import { createEffect } from "solid-js";
 import { hydrate } from "solid-js/web";
+import Header from "../../components/Header";
+import About from "../../components/About";
 
 
 
@@ -9,7 +10,10 @@ export default function PageHome() {
     createEffect(() => console.log('dada'))
 
     return ( 
-        <Header />
+        <>
+            <Header />
+            <About />
+        </>
     )
 }
 

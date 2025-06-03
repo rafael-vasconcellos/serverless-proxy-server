@@ -10,5 +10,7 @@
     "skipLibCheck": true, 
     "outDir": "dist",
     "allowJs": true
-  }, 
+  },
+
+  "exclude": ["public", "dist"]
 }

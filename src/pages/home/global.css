@@ -5,18 +5,19 @@
 
 @theme { 
   --color-primary: #c10007;
-  --color-background: linear-gradient(135deg, #0a0a0a 10%, #1d0408 40%, #0a0a0a 90%);
+  --color-darker-red: #1d0408;
 }
 
 :root { 
-  --primary: #c10007;
-  --background: #1d0408;
+  --dark-purple: oklch(28.3% 0.141 291.089);
+  --dark-red: #c10007;
+  --darker-red: #1d0408;
   --foreground: #ededed;
 }
 
 body {
   color: var(--foreground);
-  background: linear-gradient(135deg, #0a0a0a 10%, #1d0408 40%, #0a0a0a 90%);
+  background: linear-gradient(135deg, #0a0a0a 10%, var(--color-darker-red) 40%, #0a0a0a 70%);
   /* font-family: Helvetica, sans-serif, Arial; */
 }
 

@@ -20,7 +20,7 @@ export default function Input() {
     return (
         <section class="flex gap-3 items-center flex-responsive">
 			<input class="w-80 px-5 py-3 rounded-full bg-transparent border border-zinc-500 text-zinc-400 outline-0" ref={input}
-			 type="search" placeholder="Search profile, photos, videos, etc..." />
+			 type="search" placeholder="Insert your website here." />
 			<button class="w-fit px-5 py-3 rounded-full border border-primary text-primary cursor-pointer hover:bg-primary hover:text-white" onClick={search}>
 				Search
 			</button>

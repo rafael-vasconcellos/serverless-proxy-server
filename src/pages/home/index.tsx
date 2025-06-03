@@ -4,7 +4,7 @@ import PageHome from "./page";
 
 export default function Home() { 
     return ( 
-        <Layout title="Rafael's Proxy">
+        <Layout title="Japanese Proxy">
             <PageHome />
         </Layout>
     )
