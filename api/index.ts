@@ -16,7 +16,9 @@ const expressHandler = async(req: typeof request, res: typeof response) => {
     if (response.headers.get('content-type')?.includes('text')) { 
         const text_code = await response.text()
         const { hostname } = getHostname(req as any)
-        const modifiedText = text_code.replaceAll(hostname, req.hostname)
+        const domainName = hostname.replace('www.', '')
+        let modifiedText = text_code.replaceAll(hostname, req.hostname)
+        modifiedText = modifiedText.replaceAll('=.' + domainName, '=' + req.hostname)
         res.send(modifiedText)
         //console.log(modifiedText)
         return;
