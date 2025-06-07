@@ -57,7 +57,7 @@ function getRollupOption(srcPath, generate = 'ssr') {
                     //"node", "browser", "default"
                 ],
             }), 
-            srcPath.includes('tsx')? typescript({ jsx: 'preserve' }) : '', 
+            srcPath.includes('tsx')? typescript({ jsx: 'preserve', module: 'esnext' }) : '', 
             babel({
                 babelHelpers: "bundled",
                 extensions: [".js", ".jsx", ".ts", ".tsx"],
@@ -127,7 +127,8 @@ async function main() {
         writeFile(outputPath.replace(fileExtension, '.js'), domCode)
     }
 
-    fs.cp('./public', './dist/public', { recursive: true }, ()=>{})
+    //fs.cp('./public', './dist/public', { recursive: true }, ()=>{})
+    fs.cp('./api', './netlify/functions', { recursive: true }, ()=>{})
 }
 
 main().then(response => { 

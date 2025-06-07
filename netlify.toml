@@ -1,0 +1,14 @@
+[functions]
+  external_node_modules = ["express"]
+  node_bundler = "esbuild"
+  included_files = ["public/**"]
+[[redirects]]
+  force = true
+  from = "/*"
+  status = 200
+  to = "/.netlify/functions/index"
+[[redirects]]
+  force = true
+  from = "/home"
+  status = 301
+  to = "/public/home"

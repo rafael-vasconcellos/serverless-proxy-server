@@ -1,5 +1,5 @@
-import Layout from "./layout";
-import PageHome from "./page";
+import Layout from "./layout.jsx";
+import PageHome from "./page.jsx";
 
 
 export default function Home() { 

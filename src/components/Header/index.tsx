@@ -1,5 +1,5 @@
-import BigLogo from "./BigLogo";
-import Input from "./Input";
+import BigLogo from "./BigLogo.jsx";
+import Input from "./Input.jsx";
 
 
 export default function Header() {

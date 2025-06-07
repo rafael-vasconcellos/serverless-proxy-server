@@ -1,7 +1,7 @@
 import { createEffect } from "solid-js";
 import { hydrate } from "solid-js/web";
-import Header from "../../components/Header";
-import About from "../../components/About";
+import Header from "../../components/Header/index.jsx";
+import About from "../../components/About/index.jsx";
 
 
 

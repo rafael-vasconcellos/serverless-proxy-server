@@ -1,5 +1,5 @@
-import ProxyIcon from "../ProxyIcon";
-import AboutCard from "./Card";
+import ProxyIcon from "../ProxyIcon.jsx";
+import AboutCard from "./Card.jsx";
 
 
 export default function About() { 

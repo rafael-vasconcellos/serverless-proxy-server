@@ -1,15 +1,17 @@
 import path from "path";
 import { fileURLToPath } from 'url'
-import express, { request, response } from "express"
+import express, { request, response, Router } from "express"
 import cookieParser from 'cookie-parser'
-import handler, { getHostname } from "./handler.js"
+import routesHandler, { getHostname } from "./handler.js"
+import serverless from "serverless-http"
 import fs from 'fs'
 
 
 
 const app = express()
-const dirname = path.dirname(fileURLToPath(import.meta.url))
-const public_path = path.join(dirname, '../public')
+const router = Router()
+//const dirname = import.meta.url? path.dirname(fileURLToPath(import.meta.url)) : __dirname
+const public_path = path.join(process.cwd(), 'public')
 const expressHandler = async(req: typeof request, res: typeof response) => { 
     const { hostname } = getHostname(req as any)
     if (!hostname) { 
@@ -17,7 +19,7 @@ const expressHandler = async(req: typeof request, res: typeof response) => {
         return 
     }
 
-    const response = await handler(req as any).catch(err => ( 
+    const response = await routesHandler(req as any).catch(err => ( 
         new Response(err?.stack ?? err, { status: 500 })
     ))
     response.headers.forEach((value, key) => res.header(key, value))
@@ -44,8 +46,11 @@ const expressHandler = async(req: typeof request, res: typeof response) => {
         })
     )
 }
-app.use(cookieParser())
-app.use(express.static(public_path))
+console.log(public_path)
+console.log(fs.readdirSync('netlify'))
+
+router.use(cookieParser())
+router.use(express.static(public_path))
 /* app.get('/list', (req, res) => { 
     res.send({ 
         current: fs.readdirSync('./api'),
@@ -61,8 +66,11 @@ app.get('/ip', async(req, res) => {
     res.status(response.status).send(await response.text())
 }); */
 
-app.get("/*splat", expressHandler)
-app.get("/", expressHandler)
+router.get("/*splat", expressHandler)
+router.get("/", expressHandler)
 
+app.use(router)
+app.use('/.netlify/functions/*splat', router)
 app.listen(3000, () => console.log("Server ready on port 3000."))
+export const handler = serverless(app)
 export default app

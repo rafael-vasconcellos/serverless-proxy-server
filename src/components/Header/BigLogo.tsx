@@ -1,5 +1,5 @@
-import JapanLogo from "../JapanIcon";
-import ProxyIcon from "../ProxyIcon";
+import JapanLogo from "../JapanIcon.jsx";
+import ProxyIcon from "../ProxyIcon.jsx";
 
 
 interface LogoProps { 

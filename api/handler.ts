@@ -1,5 +1,5 @@
 import { format } from 'url'
-import { ExtendedRequest } from "./types";
+import { ExtendedRequest } from "./types.js";
 
 
 export function getHostname(req: ExtendedRequest) { 
@@ -24,7 +24,7 @@ export default async function handler(req: ExtendedRequest) {
     /* const headers: HeadersInit = Object.fromEntries( 
         Object.entries(req.headers ?? {}).filter(([ key, value ]) => !['referer', 'host'].includes(key))
     ) as Record<string, any> */
-    const query = Object.fromEntries(
+    const query: Record<string, any> = Object.fromEntries(
         Object.entries(req.query ?? {}).filter(([ key, value ]) => key!=='hostname')
     )
     const { hostname, queryHostname, cookieHostname, refererHostname } = getHostname(req)

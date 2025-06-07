@@ -3,7 +3,8 @@
     "target": "es2021",                              
     "jsx": "preserve",                            
     "jsxImportSource": "solid-js",                        
-    "module": "preserve", 
+    "module": "nodenext", 
+    /* "moduleResolution": "classic", */
     "esModuleInterop": true,                         
     "forceConsistentCasingInFileNames": true,        
     "strict": true,                                  
@@ -12,5 +13,5 @@
     "allowJs": true
   },
 
-  "exclude": ["public", "dist"]
+  "exclude": ["public", "dist", "test", "netlify"]
 }
