@@ -29,8 +29,9 @@ const expressHandler = async(req: typeof request, res: typeof response) => {
     if (response.headers.get('content-type')?.includes('text')) { 
         const text_code = await response.text()
         const domainName = hostname.replace('www.', '')
+        const regexp = new RegExp('(?<==\s*|\"|\')\.' + domainName, 'g')
         let modifiedText = text_code.replaceAll(hostname, req.hostname)
-        modifiedText = modifiedText.replaceAll('=.' + domainName, '=' + req.hostname)
+        modifiedText = modifiedText.replaceAll(regexp, req.hostname)
         res.send(modifiedText)
         //console.log(modifiedText)
         return;
@@ -46,9 +47,6 @@ const expressHandler = async(req: typeof request, res: typeof response) => {
         })
     )
 }
-console.log(public_path)
-console.log(fs.readdirSync('netlify'))
-
 router.use(cookieParser())
 router.use(express.static(public_path))
 /* app.get('/list', (req, res) => { 
