@@ -8,7 +8,7 @@ export function getHostname(req: ExtendedRequest) {
     const refererHostname = req.headers.referer? 
         new URL(req.headers.referer).searchParams.get('hostname') : null
     queryHostname = queryHostname instanceof Array? queryHostname[0] : queryHostname
-    const hostname = queryHostname ?? cookieHostname ?? refererHostname
+    const hostname = queryHostname ?? refererHostname ?? cookieHostname
     return { hostname, queryHostname, cookieHostname, refererHostname }
 }
 
