@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "node rollup.build.mjs",
-    "dev": "tsc && node dist/api/index.js",
+    "build": "tsc && node rollup.build.mjs",
+    "dev": "tsc && node rollup.build.mjs && node dist/api/index.js",
     "start": "node dist/api/index.js"
   },
   "keywords": [],

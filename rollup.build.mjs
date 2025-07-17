@@ -127,8 +127,10 @@ async function main() {
         writeFile(outputPath.replace(fileExtension, '.js'), domCode)
     }
 
-    //fs.cp('./public', './dist/public', { recursive: true }, ()=>{})
     fs.cp('./api', './netlify/functions', { recursive: true }, ()=>{})
+    if (fs.existsSync('./dist') && !fs.existsSync('./dist/public')) { 
+        fs.cp('./public', './dist/public', { recursive: true }, ()=>{})
+    }
 }
 
 main().then(response => { 
