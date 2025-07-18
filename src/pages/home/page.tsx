@@ -6,8 +6,7 @@ import About from "../../components/About/index.jsx";
 
 
 export default function PageHome() { 
-    let test: string;
-    createEffect(() => console.log('dada'))
+    //createEffect(() => console.log('dada'))
 
     return ( 
         <>
